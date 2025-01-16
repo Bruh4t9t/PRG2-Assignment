@@ -35,5 +35,20 @@ namespace PRG2_Assignment
             get; set;
         }
 
+        public bool AddAirline(Airline)
+        {
+            return bool;
+        }
+
+        public bool AddBoardingGate(BoardingGate)
+        {
+            return bool;
+        }
+
+        public void GetAirlineFrommFlight(Flight)
+        {
+            return;
+        }
+
     }
 }
