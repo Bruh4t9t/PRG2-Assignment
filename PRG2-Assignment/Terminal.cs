@@ -49,6 +49,15 @@ namespace PRG2_Assignment
         {
             return;
         }
+        public void PrintAirlineFee()
+        {
+            return;
+        }
+
+        public string ToString()
+        {
+            return base.ToString()
+        }
 
     }
 }
