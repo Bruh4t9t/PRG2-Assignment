@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PRG2_Assignment
 {
-    class Terminal
+    public class Terminal
     {
-        private string terminalName;
-        public string TerminalName
+        public string terminalName
         {
-            get { return terminalName; }
-            set { terminalName = value; }
+            get; set;
         }
 
         public Dictionary<string, Airline> airlines
@@ -35,29 +30,38 @@ namespace PRG2_Assignment
             get; set;
         }
 
-        public bool AddAirline(Airline)
+        public Terminal(string TerminalName, Dictionary<string, Airline> Airlines, Dictionary<string, Flight> Flights, Dictionary<string, BoardingGate> BoardingGates, Dictionary<string, double> GateFees)
         {
-            return bool;
+            terminalName = TerminalName;
+            airlines = Airlines;
+            flights = Flights;
+            boardingGates = BoardingGates;
+            gateFees = GateFees;
         }
 
-        public bool AddBoardingGate(BoardingGate)
-        {
-            return bool;
-        }
-
-        public void GetAirlineFrommFlight(Flight)
+        public bool AddAirline(Airline airline)
         {
             return;
         }
+
+        public bool AddBoardingGate(BoardingGate boardingGate)
+        {
+            return;
+        }
+
+        public void GetAirlineFromFlight(Flight flight)
+        {
+            return;
+        }
+
         public void PrintAirlineFee()
         {
             return;
         }
 
-        public string ToString()
+        public override string ToString()
         {
-            return base.ToString()
+            return base.ToString();
         }
-
     }
 }

@@ -12,10 +12,12 @@ namespace PRG2_Assignment
         { 
             get; set; 
         }
+
         public override double CalculateFees()
         {
-
+            return;
         }
+
         public override string ToString()
         {
             return base.ToString();

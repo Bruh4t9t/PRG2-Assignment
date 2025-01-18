@@ -15,8 +15,9 @@ namespace PRG2_Assignment
 
         public override double CalculateFees()
         {
-
+            return;
         }
+
         public override string ToString()
         {
             return base.ToString();
