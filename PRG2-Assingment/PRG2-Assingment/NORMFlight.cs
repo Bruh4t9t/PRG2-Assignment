@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace PRG2_Assingment
 {
-    public class NORMFlight:Flight
+    public class NORMFlight //:Flight
     {
-        public override double CalculateFees()
+        /*public override double CalculateFees()
         {
-
-        }
+            return 0 ;
+        }*/
         public override string ToString()
         {
             return base.ToString();

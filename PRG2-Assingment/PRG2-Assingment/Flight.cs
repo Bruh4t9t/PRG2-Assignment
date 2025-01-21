@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PRG2_Assingment
 {
-    public  class Flight
+    abstract public class Flight
     {
         public string flightNumber { get; set; }
         public string origin { get; set; }
@@ -18,13 +18,13 @@ namespace PRG2_Assingment
         {
             return base.ToString();
         }
-        public Flight(string FlightNumber,string Origin,string Destination,DateTime ExpectedTime,string Status) 
+        public Flight(string FlightNumber,string Origin,string Destination,DateTime ExpectedTime) 
         { 
             flightNumber = FlightNumber;
             origin = Origin;
             destination = Destination;
             expectedTime = ExpectedTime;
-            status = Status;
+            status = "On Time";
         }
     }
 }

@@ -4,16 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRG2_Assignment
+namespace PRG2_Assingment
 {
     class Terminal
     {
-        private string terminalName;
-        public string TerminalName
-        {
-            get { return terminalName; }
-            set { terminalName = value; }
-        }
+  
+        public string TerminalName { get; set; }
+        
 
         public Dictionary<string, Airline> airlines
         {
