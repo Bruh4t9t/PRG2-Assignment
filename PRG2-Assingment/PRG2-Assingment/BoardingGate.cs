@@ -4,33 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRG2_Assignment
+namespace PRG2_Assingment
 {
     public class BoardingGate
     {
         public string gateName
-        { 
-            get; set; 
+        {
+            get; set;
         }
 
         public bool supportsCFFT
-        { 
-            get; set; 
+        {
+            get; set;
         }
 
         public bool supportsDDJB
-        { 
-            get; set; 
+        {
+            get; set;
         }
 
         public bool supportsLWTT
-        { 
-            get; set; 
+        {
+            get; set;
         }
+        public Flight flight { get; set; }
 
         public double CalculateFees()
         {
-            return;
+            return 0;
         }
 
         public string ToString()

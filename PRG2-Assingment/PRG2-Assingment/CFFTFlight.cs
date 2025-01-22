@@ -4,20 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRG2_Assignment
+namespace PRG2_Assingment
 {
-    public class DDJBFlight : Flight
+    public class CFFTFlight //:Flight
     {
-        public double requestFee 
-        { 
-            get; set; 
-        }
-
-        public override double CalculateFees()
+        public double requestfee {  get; set; }
+        /*public override double CalculateFees()
         {
-            return;
-        }
-
+            return 0;
+        }*/
         public override string ToString()
         {
             return base.ToString();
