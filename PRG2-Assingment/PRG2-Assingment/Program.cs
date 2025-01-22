@@ -44,3 +44,34 @@ foreach(List<string> flight in flightList)
         }
     }
 }
+
+
+// For BoardingGates
+
+string[] file_data = File.ReadAllLines("boardinggates.csv").Skip(1).ToArray();
+
+List<BoardingGate> boardingGates = new List<BoardingGate>();
+
+foreach (string item in file_data)
+{
+    file_data = item.Split(",");
+    string gatename = file_data[0];
+    bool supportsCFFT = Convert.ToBoolean(file_data[1]);
+    bool supportsDDJB = Convert.ToBoolean(file_data[2]);
+    bool supportsLWTT = Convert.ToBoolean(file_data[3]);
+
+    BoardingGate addGateinfo = new BoardingGate(gatename, supportsCFFT, supportsDDJB, supportsLWTT);
+    boardingGates.Add(addGateinfo);
+}
+
+
+void DisplayGates(List<BoardingGate> addGateinfo)
+{
+    Console.WriteLine("{0,-15}{1,-15}{2,15}{3,15}", "Boarding Gate", "DDJB", "CFFT", "LWTT");
+    foreach (var gates in boardingGates)
+    {
+        Console.WriteLine("{0,-15}{1,-15}{2,15}{3,15}", gates.gateName, gates.supportsDDJB, gates.supportsCFFT, gates.supportsLWTT);
+    }
+}
+
+DisplayGates(boardingGates);
