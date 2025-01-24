@@ -10,11 +10,13 @@ namespace PRG2_Assingment
     public class Airline
     {
         public string name {  get; set; }
-        public string description { get; set; } 
-        public Dictionary<string, Flight> tags { get; set; }
+        public string code { get; set; } 
+        public Dictionary<string, Flight> flights { get; set; }
         public bool AddFlight(Flight flight)
         {
-            return false;
+
+            flights.Add(flight.flightNumber, flight);
+            return true;
         }
         public double CalculateFees()
         {
@@ -28,11 +30,11 @@ namespace PRG2_Assingment
         {
             return "";
         }
-        public Airline(string Name,string Description, Dictionary<string, Flight> Tags) 
+        public Airline(string Name, string Code) 
         {
             name = Name;
-            description = Description;
-            tags = Tags;
+            code = Code;
+            flights = new Dictionary<string, Flight>();
             
         }
     }

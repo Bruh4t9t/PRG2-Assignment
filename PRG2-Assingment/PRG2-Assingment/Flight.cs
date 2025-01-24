@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace PRG2_Assingment
 {
-    abstract public class Flight
+    public class Flight
     {
         public string flightNumber { get; set; }
         public string origin { get; set; }
         public string destination {  get; set; }
         public DateTime expectedTime { get; set; }
         public string status { get; set; }
-        public abstract double CalculateFees();
+        public double CalculateFees() { return 0; }
         public override string ToString()
         {
-            return base.ToString();
+            return "Expected Time: " + expectedTime;
         }
         public Flight(string FlightNumber,string Origin,string Destination,DateTime ExpectedTime) 
         { 
