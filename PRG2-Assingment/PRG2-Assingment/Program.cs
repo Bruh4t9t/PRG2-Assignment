@@ -88,3 +88,117 @@ void DisplayGates(Dictionary<string, BoardingGate> boardingGates)
 }
 
 DisplayGates(boardingGates);
+
+
+
+// Question 5 by Damian 
+void AssignGate(Dictionary<string, Flight> flights)
+{
+    Console.Write("Enter Flight Number: ");
+    string flightNum = Console.ReadLine().ToUpper();
+
+    if (flights.ContainsKey(flightNum))
+    {
+        BoardingGate selectedGate = null;
+        bool gateAssigned = false;
+
+        Console.Write("Enter Boarding Gate Name: ");
+        string boardinggatename = Convert.ToString(Console.ReadLine().ToUpper());
+
+        Flight flight = flights[flightNum];
+
+        Console.WriteLine("\nFlight Details:");
+        Console.WriteLine($"Flight Number: {flight.flightNumber}");
+        Console.WriteLine($"Origin: {flight.origin}");
+        Console.WriteLine($"Destination: {flight.destination}");
+        Console.WriteLine($"Expected Departure/Arrival: {flight.expectedTime}");
+
+        string specialRequestCode = "";
+        bool found = false;
+
+        foreach (var flightDetails in flightList)
+        {
+            if (flightDetails[0] == flightNum && flightDetails.Count > 4)
+            {
+                specialRequestCode = flightDetails[4];
+                found = true;
+                break;
+            }
+        }
+
+        if (found)
+        {
+            Console.WriteLine($"Special Request Code: {specialRequestCode}");
+        }
+        else
+        {
+            Console.WriteLine($"Special Request Code: None");
+        }
+
+        do
+        {
+            if (boardingGates.ContainsKey(boardinggatename))
+            {
+                selectedGate = boardingGates[boardinggatename];
+
+                if (selectedGate.flight != null) 
+                {
+                    Console.WriteLine($"Gate {boardinggatename} is already assigned to flight {selectedGate.flight.flightNumber}.");
+                    gateAssigned = false;
+                    break;
+                }
+                else
+                {
+                    gateAssigned = true;
+                    Console.WriteLine($"Boarding Gate Name:  {selectedGate.gateName} is available.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid Boarding Gate.");
+                gateAssigned = false;
+                break ;
+            }
+        } while (!gateAssigned); 
+
+        Console.WriteLine($"Gate {selectedGate.gateName} supports the following:");
+        Console.WriteLine($"Supports DDJB: {selectedGate.supportsDDJB}");
+        Console.WriteLine($"Supports CFFT: {selectedGate.supportsCFFT}");
+        Console.WriteLine($"Supports LWTT: {selectedGate.supportsLWTT}");
+
+        Console.Write("Would you like to update the status of the flight? (Y/N): ");
+        string option = Convert.ToString(Console.ReadLine().ToUpper());
+
+        if (option == "Y")
+        {
+            Dictionary<int, string> flightStatusOptions = new Dictionary<int, string>
+            {
+                { 1, "Delayed" },
+                { 2, "Boarding" },
+                { 3, "On Time" }
+            };
+            Console.WriteLine("1.  Delayed");
+            Console.WriteLine("2.  Boarding");
+            Console.WriteLine("3.  On Time");
+            Console.Write("Please select the new status of the flight: ");
+
+            int newOption = Convert.ToInt32(Console.ReadLine());
+
+            flight.status = flightStatusOptions[newOption];
+            Console.WriteLine($"Flight {flightNum} status updated to {flight.status}.");  // For testing
+        }
+
+        selectedGate.flight = flight;
+        Console.WriteLine($"Flight {flightNum} has been assigned to Boarding Gate {selectedGate.gateName}!");
+    }
+    else
+    {
+        Console.WriteLine("Invalid Flight Number.");
+        AssignGate(flights);
+    }
+}
+
+
+
+AssignGate(flights);
+AssignGate(flights);
