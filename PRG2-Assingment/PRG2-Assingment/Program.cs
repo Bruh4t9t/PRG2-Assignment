@@ -150,7 +150,7 @@ void AssignGate(Dictionary<string, Flight> flights)
                 else
                 {
                     gateAssigned = true;
-                    Console.WriteLine($"Boarding Gate Name:  {selectedGate.gateName} is available.");
+                    Console.WriteLine($"Boarding Gate Name:  {selectedGate.gateName} is available."); // For Testing
                 }
             }
             else
