@@ -88,10 +88,18 @@ void DisplayGates(Dictionary<string, BoardingGate> boardingGates)
 }
 
 DisplayGates(boardingGates);
+// Please use when you want to check if value is Y or N 
+bool checkYN(string yn)
+{
+    if (yn.ToUpper() == "Y")
+    {
+        return true;
+    }
+    return false;
+}
 
 
-
-// Question 5 by Damian 
+// Task 5 by Damian 
 void AssignGate(Dictionary<string, Flight> flights)
 {
     Console.Write("Enter Flight Number: ");
@@ -197,8 +205,97 @@ void AssignGate(Dictionary<string, Flight> flights)
         AssignGate(flights);
     }
 }
+// Task 6
+void setFlight()
+{
+    string option = "Y";
+    List<string> codelist = new List<string>();
+    while (option == "Y")
+    {
+        Console.WriteLine("Enter Flight number");
+        String flightNumber = Console.ReadLine();
+        while (flightNumber.Length != 6) 
+        {
+            Console.WriteLine("Invalid Innput");
+            Console.WriteLine("Enter Flight number");
+            flightNumber = Console.ReadLine();
+
+        }
+        Console.WriteLine(flightNumber.Substring(0, 2));
+
+        foreach (List<string> name in nameList)
+        {
+            codelist.Add(name[1]);
+            Console.WriteLine(name[1]);
+        }
+        while (!(codelist.Contains(flightNumber.Substring(0, 2))))
+        {
+            Console.WriteLine("Invalid Innput");
+            Console.WriteLine("Enter Flight number");
+            flightNumber = Console.ReadLine();
+        }
+
+        Console.WriteLine("Enter Origin");
+        String origin = Console.ReadLine();
+        Console.WriteLine("Enter Destination");
+        String Destination = Console.ReadLine();
+        Console.WriteLine("Enter Expected Departure/Arrival");
+        String dep = Console.ReadLine();
+        while (!DateTime.TryParse(dep, out DateTime result))
+        {
+            Console.WriteLine("Invalid Date Time");
+            Console.WriteLine("Enter Expected Departure/Arrival");
+            dep = Console.ReadLine();
+        }
+        string SpecialRequestCode = "";
+        Console.WriteLine("Do you want to enter a special request code(N/Y)");
+        if (Console.ReadLine().ToUpper() == "Y")
+        {
+            Console.WriteLine("Enter special code: ");
+            SpecialRequestCode = Console.ReadLine();
+
+        }
+        Flight newFlight = new Flight(flightNumber, origin, Destination, Convert.ToDateTime(dep));
+        flights.Add(flightNumber, newFlight);
+
+        foreach (Airline airline in airlines)
+        {
+            foreach (KeyValuePair<string, Flight> pair in flights)
+            {
+                if (pair.Key.Substring(0, 2) == airline.code)
+                {
+                    airline.AddFlight(newFlight);
+                    break;
+
+                }
+            }
+        }
+        if (SpecialRequestCode != "")
+        {
+            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep},{SpecialRequestCode}");
+        }
+        else
+        {
+            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep}");
+
+        }
+        Console.WriteLine("Do you want to enter another flight (Y/N)");
+        option = Console.ReadLine().ToUpper();
+        while (!checkYN(option)) 
+        {
+            Console.WriteLine("Do you want to enter another flight (Y/N)");
+            option = Console.ReadLine().ToUpper();
+        };
+        Console.WriteLine(option);
+        if (option == "N"){
+            break;
+        }
+    }
 
 
 
+
+}
+setFlight();
 AssignGate(flights);
 AssignGate(flights);
