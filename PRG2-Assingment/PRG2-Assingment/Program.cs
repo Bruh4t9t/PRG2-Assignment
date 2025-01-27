@@ -6,6 +6,7 @@ using System.IO;
 // Task 3 ( By Puru )
 List<List<string>> flightList = new List<List<string>>();
 List<List<string>> nameList = new List<List<string>>();
+
 foreach (string line in File.ReadLines("airlines.csv"))
 {
     List<string> newList = new List<string>(line.Split(','));
@@ -87,8 +88,8 @@ void DisplayGates(Dictionary<string, BoardingGate> boardingGates)
     }
 }
 
-DisplayGates(boardingGates);
 // Please use when you want to check if value is Y or N 
+// Ok sigma
 bool checkYN(string yn)
 {
     if (yn.ToUpper() == "Y")
@@ -152,13 +153,11 @@ void AssignGate(Dictionary<string, Flight> flights)
                 if (selectedGate.flight != null) 
                 {
                     Console.WriteLine($"Gate {boardinggatename} is already assigned to flight {selectedGate.flight.flightNumber}.");
-                    gateAssigned = false;
                     break;
                 }
                 else
                 {
                     gateAssigned = true;
-                    Console.WriteLine($"Boarding Gate Name:  {selectedGate.gateName} is available."); // For Testing
                 }
             }
             else
@@ -167,37 +166,40 @@ void AssignGate(Dictionary<string, Flight> flights)
                 gateAssigned = false;
                 break ;
             }
-        } while (!gateAssigned); 
+        } while (!gateAssigned);
 
-        Console.WriteLine($"Gate {selectedGate.gateName} supports the following:");
-        Console.WriteLine($"Supports DDJB: {selectedGate.supportsDDJB}");
-        Console.WriteLine($"Supports CFFT: {selectedGate.supportsCFFT}");
-        Console.WriteLine($"Supports LWTT: {selectedGate.supportsLWTT}");
-
-        Console.Write("Would you like to update the status of the flight? (Y/N): ");
-        string option = Convert.ToString(Console.ReadLine().ToUpper());
-
-        if (option == "Y")
+        if (gateAssigned != false)
         {
-            Dictionary<int, string> flightStatusOptions = new Dictionary<int, string>
+            Console.WriteLine($"Gate {selectedGate.gateName} supports the following:");
+            Console.WriteLine($"Supports DDJB: {selectedGate.supportsDDJB}");
+            Console.WriteLine($"Supports CFFT: {selectedGate.supportsCFFT}");
+            Console.WriteLine($"Supports LWTT: {selectedGate.supportsLWTT}");
+
+            Console.Write("Would you like to update the status of the flight? (Y/N): ");
+            string option = Convert.ToString(Console.ReadLine().ToUpper());
+
+            if (option == "Y")
+            {
+                Dictionary<int, string> flightStatusOptions = new Dictionary<int, string>
             {
                 { 1, "Delayed" },
                 { 2, "Boarding" },
                 { 3, "On Time" }
             };
-            Console.WriteLine("1.  Delayed");
-            Console.WriteLine("2.  Boarding");
-            Console.WriteLine("3.  On Time");
-            Console.Write("Please select the new status of the flight: ");
+                Console.WriteLine("1.  Delayed");
+                Console.WriteLine("2.  Boarding");
+                Console.WriteLine("3.  On Time");
+                Console.Write("Please select the new status of the flight: ");
 
-            int newOption = Convert.ToInt32(Console.ReadLine());
+                int newOption = Convert.ToInt32(Console.ReadLine());
 
-            flight.status = flightStatusOptions[newOption];
-            Console.WriteLine($"Flight {flightNum} status updated to {flight.status}.");  // For testing
+                flight.status = flightStatusOptions[newOption];
+                Console.WriteLine($"Flight {flightNum} status updated to {flight.status}.");  // For testing
+            }
+
+            selectedGate.flight = flight;
+            Console.WriteLine($"Flight {flightNum} has been assigned to Boarding Gate {selectedGate.gateName}!");
         }
-
-        selectedGate.flight = flight;
-        Console.WriteLine($"Flight {flightNum} has been assigned to Boarding Gate {selectedGate.gateName}!");
     }
     else
     {
@@ -205,6 +207,7 @@ void AssignGate(Dictionary<string, Flight> flights)
         AssignGate(flights);
     }
 }
+
 // Task 6
 void setFlight()
 {
@@ -291,11 +294,105 @@ void setFlight()
             break;
         }
     }
+}
 
 
+// Task 7 by Damian
 
+void DisplayAirlines(List<List<string>> nameList)
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine("{0,-15}{1,15}", "Airline Code", "Airline Name");
+    foreach (var name in nameList)
+    {
+        Console.WriteLine("{0,-18}{1,-15}", name[1], name[0]);
+    }
+    Console.Write("Enter Airline Code: ");
+    string selectedcode = Convert.ToString(Console.ReadLine().ToUpper());
+    // To be implemented after dictionary fix
 
 }
-setFlight();
-AssignGate(flights);
-AssignGate(flights);
+
+//setFlight();
+//AssignGate(flights);
+//AssignGate(flights);
+
+
+// Console Menu
+
+Console.WriteLine("Loading Airlines...");
+Console.WriteLine("8 Airlines Loaded!");
+Console.WriteLine("Loading Boarding Gates...");
+Console.WriteLine("66 Boarding Gates Loaded!");
+Console.WriteLine("Loading Flights...");
+Console.WriteLine("30 Flights Loaded!");
+
+void DisplayMenu()
+{
+    int option;
+    do
+    {
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Welcome to Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine("1. List All Flights");
+    Console.WriteLine("2. List Boarding Gates");
+    Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+    Console.WriteLine("4. Create Flight");
+    Console.WriteLine("5. Display Airline Flights");
+    Console.WriteLine("6. Modify Flight Details");
+    Console.WriteLine("7. Display Flight Schedule");
+    Console.WriteLine("0. Exit");
+    Console.WriteLine();
+
+    Console.Write("Please select your option: ");
+
+    if (int.TryParse(Console.ReadLine(), out option))
+    {
+            switch (option)
+            {
+                case 1:
+                    Console.WriteLine(""); // Add flights
+                    break;
+
+                case 2:
+                    DisplayGates(boardingGates);
+                    break;
+                case 3:
+                    AssignGate(flights);
+                    break;
+                case 4:
+                    setFlight();
+                    break;
+                case 5:
+                    DisplayAirlines(nameList);
+                    break;
+                case 6:
+                    Console.WriteLine(""); // Modify status
+                    break;
+                case 7:
+                    Console.WriteLine(""); // Display
+                    break;
+                case 0:
+                    Console.WriteLine("Goodbye!");
+                    break;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input.");
+        }
+
+        if (option != 0)
+        {
+            Console.WriteLine("Press Enter to return to the menu...");
+            Console.ReadLine();
+        }
+
+    } while (option != 0);
+}
+
+
+DisplayMenu();
