@@ -13,7 +13,7 @@ foreach (string line in File.ReadLines("airlines.csv"))
     nameList.Add(newList);
 }
 nameList.RemoveAt(0);
-foreach  (string line in File.ReadLines("flights.csv")) //Use your file path
+foreach (string line in File.ReadLines("flights.csv")) //Use your file path
 {
     List<string> newList = new List<string>(line.Split(','));
     flightList.Add(newList);
@@ -22,40 +22,55 @@ foreach  (string line in File.ReadLines("flights.csv")) //Use your file path
 flightList.RemoveAt(0);
 int padding = 15;
 Console.WriteLine($"{"Flight number":-15}{"Airline Name":-15}{"Origin":padding}{"Destination":padding}{"Expected Departure/Arrival":padding}");
-foreach(List<string> flight in flightList)
+foreach (List<string> flight in flightList)
 {
     foreach (List<string> name in nameList)
     {
-        if (flight[0].Substring(0,2) == name[1])
+        Console.WriteLine(flight[0].Substring(0,2));
+        if (flight[0].Substring(0, 2) == name[1])
         {
-            
+
             Console.WriteLine($"{name[0]:-15}{flight[0]:-15}{flight[1]:padding}{flight[2]:padding}{flight[3]:padding}");
+            
         }
     }
 }
 
 // Task 2(by Puru)
-Dictionary<string,Flight> flights = new Dictionary<string, Flight>();
+Dictionary<string, Flight> flights = new Dictionary<string, Flight>();
 foreach (List<String> flight in flightList)
 {
-    flights.Add(flight[0],new Flight(flight[0], flight[1], flight[2], Convert.ToDateTime(flight[3])));   
+    flights.Add(flight[0], new Flight(flight[0], flight[1], flight[2], Convert.ToDateTime(flight[3])));
 }
 // Task 1 Cont'd ( By Puru)
 List<Airline> airlines = new List<Airline>();
+Dictionary<string,string> AirlinesDictionary = new Dictionary<string,string>();
+
 foreach (List<string> name in nameList)
 {
     airlines.Add(new Airline(name[0], name[1]));
+    AirlinesDictionary[name[1]] = name[0];
 }
+foreach(KeyValuePair<string,string> pair in AirlinesDictionary)
+{
+    Console.WriteLine(pair.Key);
+    Console.WriteLine(pair.Value);
+}
+// Please keep below part we need it 
 foreach (Airline airline in airlines)
 {
-    foreach(KeyValuePair<string,Flight> pair in flights)
+    foreach (KeyValuePair<string, Flight> pair in flights)
     {
-        if (pair.Key.Substring(0,2) == airline.code)
+        if (pair.Key.Substring(0, 2) == airline.code)
         {
             airline.AddFlight(pair.Value);
-            
+
         }
-    }    
+    }
+}
+foreach(Airline airline in airlines)
+{
+    Console.WriteLine(airline.code);
 }
 
 // For BoardingGates
@@ -150,7 +165,7 @@ void AssignGate(Dictionary<string, Flight> flights)
             {
                 selectedGate = boardingGates[boardinggatename];
 
-                if (selectedGate.flight != null) 
+                if (selectedGate.flight != null)
                 {
                     Console.WriteLine($"Gate {boardinggatename} is already assigned to flight {selectedGate.flight.flightNumber}.");
                     break;
@@ -164,7 +179,7 @@ void AssignGate(Dictionary<string, Flight> flights)
             {
                 Console.WriteLine("Invalid Boarding Gate.");
                 gateAssigned = false;
-                break ;
+                break;
             }
         } while (!gateAssigned);
 
@@ -217,7 +232,7 @@ void setFlight()
     {
         Console.WriteLine("Enter Flight number");
         String flightNumber = Console.ReadLine();
-        while (flightNumber.Length != 6) 
+        while (flightNumber.Length != 6)
         {
             Console.WriteLine("Invalid Innput");
             Console.WriteLine("Enter Flight number");
@@ -284,13 +299,14 @@ void setFlight()
         }
         Console.WriteLine("Do you want to enter another flight (Y/N)");
         option = Console.ReadLine().ToUpper();
-        while (!checkYN(option)) 
+        while (!checkYN(option))
         {
             Console.WriteLine("Do you want to enter another flight (Y/N)");
             option = Console.ReadLine().ToUpper();
         };
         Console.WriteLine(option);
-        if (option == "N"){
+        if (option == "N")
+        {
             break;
         }
     }
@@ -334,23 +350,23 @@ void DisplayMenu()
     int option;
     do
     {
-    Console.WriteLine("=============================================");
-    Console.WriteLine("Welcome to Changi Airport Terminal 5");
-    Console.WriteLine("=============================================");
-    Console.WriteLine("1. List All Flights");
-    Console.WriteLine("2. List Boarding Gates");
-    Console.WriteLine("3. Assign a Boarding Gate to a Flight");
-    Console.WriteLine("4. Create Flight");
-    Console.WriteLine("5. Display Airline Flights");
-    Console.WriteLine("6. Modify Flight Details");
-    Console.WriteLine("7. Display Flight Schedule");
-    Console.WriteLine("0. Exit");
-    Console.WriteLine();
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Welcome to Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("1. List All Flights");
+        Console.WriteLine("2. List Boarding Gates");
+        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+        Console.WriteLine("4. Create Flight");
+        Console.WriteLine("5. Display Airline Flights");
+        Console.WriteLine("6. Modify Flight Details");
+        Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("0. Exit");
+        Console.WriteLine();
 
-    Console.Write("Please select your option: ");
+        Console.Write("Please select your option: ");
 
-    if (int.TryParse(Console.ReadLine(), out option))
-    {
+        if (int.TryParse(Console.ReadLine(), out option))
+        {
             switch (option)
             {
                 case 1:
@@ -396,3 +412,75 @@ void DisplayMenu()
 
 
 DisplayMenu();
+// Task 7
+
+void enterFlightNumber()
+{
+    Console.Write("Enter a flight code: ");
+    string flightCode = Console.ReadLine();
+    bool codematch = false;
+    
+    while (!codematch)
+    {
+        foreach (List<string> name in nameList)
+        {
+            
+            if (flightCode.ToUpper() == name[1])
+            {
+                
+                codematch = true;
+                break;
+            }
+        }
+        Console.WriteLine(codematch);
+        if (codematch)
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("No Flight code found!");
+
+        }
+        Console.Write("Enter a flight code: ");
+        flightCode = Console.ReadLine();
+
+    };
+    foreach (KeyValuePair<string,Flight> flight in flights)
+    {
+        
+        
+        if (flight.Key.Substring(0,2) == flightCode.ToUpper())
+        {
+            Console.WriteLine(flight.Key);
+            Console.WriteLine(flight.Value);
+        }
+
+    }
+    Console.Write("Enter a valid flight number");
+    string number = Console.ReadLine();
+    string code = flightCode + " " + number;
+    bool inside = false;
+    foreach (List<string> flight in flightList) 
+    {
+        
+        if (code == flight[0])
+        {
+            inside = true;
+            try
+            {
+                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]},{flight[4]}");
+                
+            }
+            catch
+            {
+                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]}");
+            }
+        }
+    }
+    if (inside == false)
+    {
+        Console.WriteLine("Flight does not exist");
+    }
+}
+enterFlightNumber();
