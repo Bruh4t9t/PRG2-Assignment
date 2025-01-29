@@ -7,13 +7,13 @@ using System.IO;
 List<List<string>> flightList = new List<List<string>>();
 List<List<string>> nameList = new List<List<string>>();
 
-foreach (string line in File.ReadLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\airlines.csv"))
+foreach (string line in File.ReadLines("airlines.csv"))
 {
     List<string> newList = new List<string>(line.Split(','));
     nameList.Add(newList);
 }
 nameList.RemoveAt(0);
-foreach (string line in File.ReadLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\flights.csv")) //Use your file path
+foreach (string line in File.ReadLines("flights.csv")) //Use your file path
 {
     List<string> newList = new List<string>(line.Split(','));
     flightList.Add(newList);
@@ -56,6 +56,7 @@ foreach(KeyValuePair<string,string> pair in AirlinesDictionary)
     Console.WriteLine(pair.Key);
     Console.WriteLine(pair.Value);
 }
+// Please keep below part we need it 
 foreach (Airline airline in airlines)
 {
     foreach (KeyValuePair<string, Flight> pair in flights)
@@ -74,7 +75,7 @@ foreach(Airline airline in airlines)
 
 // For BoardingGates
 // Task 4( By Damian)
-string[] file_data = File.ReadAllLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\boardinggates.csv").Skip(1).ToArray();
+string[] file_data = File.ReadAllLines("boardinggates.csv").Skip(1).ToArray();
 
 Dictionary<string, BoardingGate> boardingGates = new Dictionary<string, BoardingGate>();
 
@@ -411,3 +412,75 @@ void DisplayMenu()
 
 
 DisplayMenu();
+// Task 7
+
+void enterFlightNumber()
+{
+    Console.Write("Enter a flight code: ");
+    string flightCode = Console.ReadLine();
+    bool codematch = false;
+    
+    while (!codematch)
+    {
+        foreach (List<string> name in nameList)
+        {
+            
+            if (flightCode.ToUpper() == name[1])
+            {
+                
+                codematch = true;
+                break;
+            }
+        }
+        Console.WriteLine(codematch);
+        if (codematch)
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("No Flight code found!");
+
+        }
+        Console.Write("Enter a flight code: ");
+        flightCode = Console.ReadLine();
+
+    };
+    foreach (KeyValuePair<string,Flight> flight in flights)
+    {
+        
+        
+        if (flight.Key.Substring(0,2) == flightCode.ToUpper())
+        {
+            Console.WriteLine(flight.Key);
+            Console.WriteLine(flight.Value);
+        }
+
+    }
+    Console.Write("Enter a valid flight number");
+    string number = Console.ReadLine();
+    string code = flightCode + " " + number;
+    bool inside = false;
+    foreach (List<string> flight in flightList) 
+    {
+        
+        if (code == flight[0])
+        {
+            inside = true;
+            try
+            {
+                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]},{flight[4]}");
+                
+            }
+            catch
+            {
+                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]}");
+            }
+        }
+    }
+    if (inside == false)
+    {
+        Console.WriteLine("Flight does not exist");
+    }
+}
+enterFlightNumber();
