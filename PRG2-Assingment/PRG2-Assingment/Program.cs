@@ -23,27 +23,31 @@ foreach (string line in File.ReadLines("flights.csv")) //Use your file path
 
 }
 flightList.RemoveAt(0);
-int padding = 15;
-Console.WriteLine($"{"Flight number":-15}{"Airline Name":-15}{"Origin":padding}{"Destination":padding}{"Expected Departure/Arrival":padding}");
-foreach (List<string> flight in flightList)
+//int padding = 15;
+void DisplayAllFlights() // Turned into a method - Damian
 {
-    foreach (List<string> name in nameList)
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Flights for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine("{0,-15} {1,-25} {2,-20} {3,-20} {4,-20}", "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time");
+    foreach (List<string> flight in flightList)
     {
-        Console.WriteLine(flight[0].Substring(0,2));
-        if (flight[0].Substring(0, 2) == name[1])
+        foreach (List<string> name in nameList)
         {
+            //Console.WriteLine(flight[0].Substring(0,2));
+            if (flight[0].Substring(0, 2) == name[1])
+            {
 
-            Console.WriteLine($"{name[0]:-15}{flight[0]:-15}{flight[1]:padding}{flight[2]:padding}{flight[3]:padding}");
-            
+                Console.WriteLine("{0,-15} {1,-25} {2,-20} {3,-20} {4,-20}", flight[0], name[0], flight[1], flight[2], flight[3]);
+            }
         }
     }
 }
-
 // Task 2(by Puru)
 Dictionary<string, Flight> flights = new Dictionary<string, Flight>();
-foreach (List<String> flight in flightList)
+foreach (List<String> flightobj in flightList)
 {
-    flights.Add(flight[0], new Flight(flight[0], flight[1], flight[2], Convert.ToDateTime(flight[3])));
+    flights.Add(flightobj[0], new Flight(flightobj[0], flightobj[1], flightobj[2], Convert.ToDateTime(flightobj[3])));
 }
 // Task 1 Cont'd ( By Puru)
 List<Airline> airlines = new List<Airline>();
@@ -54,11 +58,11 @@ foreach (List<string> name in nameList)
     airlines.Add(new Airline(name[0], name[1]));
     AirlinesDictionary[name[1]] = name[0];
 }
-foreach(KeyValuePair<string,string> pair in AirlinesDictionary)
-{
-    Console.WriteLine(pair.Key);
-    Console.WriteLine(pair.Value);
-}
+//foreach(KeyValuePair<string,string> pair in AirlinesDictionary)
+//{
+//    Console.WriteLine(pair.Key);
+//    Console.WriteLine(pair.Value);
+//}
 // Please keep below part we need it 
 foreach (Airline airline in airlines)
 {
@@ -71,10 +75,10 @@ foreach (Airline airline in airlines)
         }
     }
 }
-foreach(Airline airline in airlines)
-{
-    Console.WriteLine(airline.code);
-}
+//foreach(Airline airline in airlines)
+//{
+//    Console.WriteLine(airline.code);
+//}
 
 // For BoardingGates
 // Task 4( By Damian)
@@ -369,7 +373,7 @@ void DisplayMenu()
             switch (option)
             {
                 case 1:
-                    Console.WriteLine(""); // Add flights
+                    DisplayAllFlights();
                     break;
 
                 case 2:
@@ -389,7 +393,7 @@ void DisplayMenu()
                     ModifyFlightDetails();                   
                     break;
                 case 7:
-                    Console.WriteLine(""); // Display
+                    SortDisplayList();
                     break;
                 case 0:
                     Console.WriteLine("Goodbye!");
@@ -709,15 +713,58 @@ void DisplayFlightDetails(Flight selectedFlight, Dictionary<string, string> Airl
         Console.WriteLine($"Special Request Code: None");
     }
 
-    string boardingGate = "";
-    if (boardingGates.ContainsKey(selectedFlight.flightNumber))
+    string boardingGate = "N/A";
+    foreach (var gate in boardingGates.Values)
     {
-        BoardingGate gate = boardingGates[selectedFlight.flightNumber];
-        if (gate != null && gate.flight != null)
+        if (gate.flight == selectedFlight)
         {
             boardingGate = gate.gateName;
+            break;
         }
     }
     Console.WriteLine($"Boarding Gate: {boardingGate}");
     Console.WriteLine();
 }
+
+
+void SortDisplayList()
+{
+    List<Flight> sortedFlights = flights.Values.ToList();
+
+    sortedFlights.Sort();
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Flight Schedule for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine("{0,-12}{1,-22}{2,-18}{3,-18}{4,-20}{5,-14}{6,-15}{7,-10}", "Flight No.", "Airline Name", "Origin", "Destination", "Departure Time", "Status", "Special Code", "Gate");
+
+    foreach (var flight in sortedFlights)
+    {
+        string airlineCode = flight.flightNumber.Substring(0, 2);
+        string airlineName = AirlinesDictionary.ContainsKey(airlineCode) ? AirlinesDictionary[airlineCode] : "Unknown";
+
+        string specialRequestCode = "N/A";
+        foreach (var flightDetails in flightList)
+        {
+            if (flightDetails[0] == flight.flightNumber && flightDetails.Count > 4)
+            {
+                specialRequestCode = flightDetails[4];
+                break;
+            }
+        }
+
+        string boardingGate = "N/A";
+        foreach (var gate in boardingGates.Values)
+        {
+            if (gate.flight == flight)
+            {
+                boardingGate = gate.gateName;
+                break;
+            }
+        }
+
+        Console.WriteLine("{0,-12}{1,-22}{2,-18}{3,-18}{4,-20}{5,-14}{6,-15}{7,-10}", flight.flightNumber, airlineName, flight.origin, flight.destination, flight.expectedTime.ToString("hh:mm tt"), flight.status, specialRequestCode, boardingGate);
+    }
+}
+
+

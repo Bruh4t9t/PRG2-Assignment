@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 //==========================================================
 namespace PRG2_Assingment
 {
-    public class Flight
+    public class Flight : IComparable<Flight>
     {
         public string flightNumber { get; set; }
         public string origin { get; set; }
@@ -29,6 +29,12 @@ namespace PRG2_Assingment
             destination = Destination;
             expectedTime = ExpectedTime;
             status = "On Time";
+        }
+
+        public int CompareTo(Flight other)
+        {
+            if (other == null) return 1;
+            return this.expectedTime.CompareTo(other.expectedTime);
         }
     }
 }
