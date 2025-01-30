@@ -43,8 +43,9 @@ namespace PRG2_Assingment
             return base.ToString();
         }
 
-        public BoardingGate(string GateName, bool SupportsCFFT, bool SupportsDDJB, bool SupportsLWTT)
+        public BoardingGate(Flight Flight,string GateName, bool SupportsCFFT, bool SupportsDDJB, bool SupportsLWTT)
         {
+            flight = Flight;
             gateName = GateName;
             supportsCFFT = SupportsCFFT;
             supportsDDJB = SupportsDDJB;
