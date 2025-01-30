@@ -280,10 +280,26 @@ void setFlight()
         {
             Console.WriteLine("Enter special code: ");
             SpecialRequestCode = Console.ReadLine();
+            while (SpecialRequestCode != "DDJB" && SpecialRequestCode != "CFFT" && SpecialRequestCode != "LWTT")
+            {
+                Console.WriteLine("Special request code is wrong");
+                Console.Write("Enter special code: ");
+                SpecialRequestCode = Console.ReadLine();
+
+            }
 
         }
         Flight newFlight = new Flight(flightNumber, origin, Destination, Convert.ToDateTime(dep));
         flights.Add(flightNumber, newFlight);
+        try
+        {
+            flightList.Add(new List<string> { newFlight.flightNumber, newFlight.origin, newFlight.destination,Convert.ToString(newFlight.expectedTime),SpecialRequestCode });
+        }
+        catch
+        {
+            flightList.Add(new List<string> { newFlight.flightNumber, newFlight.origin, newFlight.destination, Convert.ToString(newFlight.expectedTime) });
+
+        }
 
         foreach (Airline airline in airlines)
         {
@@ -308,12 +324,7 @@ void setFlight()
         }
         Console.WriteLine("Do you want to enter another flight (Y/N)");
         option = Console.ReadLine().ToUpper();
-        while (!checkYN(option))
-        {
-            Console.WriteLine("Do you want to enter another flight (Y/N)");
-            option = Console.ReadLine().ToUpper();
-        };
-        Console.WriteLine(option);
+        
         if (option == "N")
         {
             break;
@@ -403,7 +414,7 @@ void DisplayMenu()
                     SortDisplayList();
                     break;
                 case 8:
-                    seeBoardingGate();
+                    autoAssignGates();
                     break;
                 case 0:
                     Console.WriteLine("Goodbye!");
@@ -797,8 +808,8 @@ void SortDisplayList()
     }
 }
 
-
-void seeBoardingGate()
+// Advanced(a) (Puru)
+void autoAssignGates()
 {
     Queue<Flight> flightQuence = new Queue<Flight>();
     List<String> tempFlightList = new List<String>();
