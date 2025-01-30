@@ -5,18 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Xml.XPath;
 
 // Task 3 ( By Puru )
 List<List<string>> flightList = new List<List<string>>();
 List<List<string>> nameList = new List<List<string>>();
 
-foreach (string line in File.ReadLines("airlines.csv"))
+foreach (string line in File.ReadLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\airlines.csv"))
 {
     List<string> newList = new List<string>(line.Split(','));
     nameList.Add(newList);
 }
 nameList.RemoveAt(0);
-foreach (string line in File.ReadLines("flights.csv")) //Use your file path
+foreach (string line in File.ReadLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\flights.csv")) //Use your file path
 {
     List<string> newList = new List<string>(line.Split(','));
     flightList.Add(newList);
@@ -51,7 +52,7 @@ foreach (List<String> flightobj in flightList)
 }
 // Task 1 Cont'd ( By Puru)
 List<Airline> airlines = new List<Airline>();
-Dictionary<string,string> AirlinesDictionary = new Dictionary<string,string>();
+Dictionary<string, string> AirlinesDictionary = new Dictionary<string, string>();
 
 foreach (List<string> name in nameList)
 {
@@ -82,7 +83,7 @@ foreach (Airline airline in airlines)
 
 // For BoardingGates
 // Task 4( By Damian)
-string[] file_data = File.ReadAllLines("boardinggates.csv").Skip(1).ToArray();
+string[] file_data = File.ReadAllLines("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\boardinggates.csv").Skip(1).ToArray();
 
 Dictionary<string, BoardingGate> boardingGates = new Dictionary<string, BoardingGate>();
 
@@ -94,7 +95,7 @@ foreach (string item in file_data)
     bool supportsDDJB = Convert.ToBoolean(gateData[2]);
     bool supportsLWTT = Convert.ToBoolean(gateData[3]);
 
-    BoardingGate addGateinfo = new BoardingGate(gatename, supportsCFFT, supportsDDJB, supportsLWTT);
+    BoardingGate addGateinfo = new BoardingGate(null,gatename, supportsCFFT, supportsDDJB, supportsLWTT);
 
     boardingGates[gatename] = addGateinfo;
 }
@@ -111,7 +112,6 @@ void DisplayGates(Dictionary<string, BoardingGate> boardingGates)
 }
 
 // Please use when you want to check if value is Y or N 
-// Ok sigma
 bool checkYN(string yn)
 {
     if (yn.ToUpper() == "Y")
@@ -121,7 +121,7 @@ bool checkYN(string yn)
     return false;
 }
 
-
+int assigngates = 0;
 // Task 5 by Damian 
 void AssignGate(Dictionary<string, Flight> flights)
 {
@@ -137,6 +137,7 @@ void AssignGate(Dictionary<string, Flight> flights)
         string boardinggatename = Convert.ToString(Console.ReadLine().ToUpper());
 
         Flight flight = flights[flightNum];
+        
 
         Console.WriteLine("\nFlight Details:");
         Console.WriteLine($"Flight Number: {flight.flightNumber}");
@@ -196,7 +197,7 @@ void AssignGate(Dictionary<string, Flight> flights)
             Console.WriteLine($"Supports DDJB: {selectedGate.supportsDDJB}");
             Console.WriteLine($"Supports CFFT: {selectedGate.supportsCFFT}");
             Console.WriteLine($"Supports LWTT: {selectedGate.supportsLWTT}");
-
+            boardingGates[selectedGate.gateName] = new BoardingGate(flight,selectedGate.gateName,selectedGate.supportsCFFT,selectedGate.supportsDDJB,selectedGate.supportsLWTT);
             Console.Write("Would you like to update the status of the flight? (Y/N): ");
             string option = Convert.ToString(Console.ReadLine().ToUpper());
 
@@ -220,6 +221,7 @@ void AssignGate(Dictionary<string, Flight> flights)
             }
 
             selectedGate.flight = flight;
+            assigngates += 1;
             Console.WriteLine($"Flight {flightNum} has been assigned to Boarding Gate {selectedGate.gateName}!");
         }
     }
@@ -230,7 +232,7 @@ void AssignGate(Dictionary<string, Flight> flights)
     }
 }
 
-// Task 6
+// Task 6 (Puru)
 void setFlight()
 {
     string option = "Y";
@@ -297,11 +299,11 @@ void setFlight()
         }
         if (SpecialRequestCode != "")
         {
-            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep},{SpecialRequestCode}");
+            File.AppendAllText("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\flights.csv", $"\n{flightNumber},{origin},{Destination},{dep},{SpecialRequestCode}");
         }
         else
         {
-            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep}");
+            File.AppendAllText("C:\\Users\\pg200\\Documents\\GitHub\\PRG2-Assignment\\PRG2-Assingment\\PRG2-Assingment\\flights.csv", $"\n{flightNumber},{origin},{Destination},{dep}");
 
         }
         Console.WriteLine("Do you want to enter another flight (Y/N)");
@@ -341,6 +343,7 @@ void DisplayAirlines(Dictionary<string, string> AirlinesDictionary)
 
 // Console Menu
 
+
 Console.WriteLine("Loading Airlines...");
 Console.WriteLine("8 Airlines Loaded!");
 Console.WriteLine("Loading Boarding Gates...");
@@ -353,6 +356,8 @@ void DisplayMenu()
     int option;
     do
     {
+        
+        
         Console.WriteLine("=============================================");
         Console.WriteLine("Welcome to Changi Airport Terminal 5");
         Console.WriteLine("=============================================");
@@ -363,6 +368,7 @@ void DisplayMenu()
         Console.WriteLine("5. Display Airline Flights");
         Console.WriteLine("6. Modify Flight Details");
         Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("8. Automically assign flights");
         Console.WriteLine("0. Exit");
         Console.WriteLine();
 
@@ -374,6 +380,7 @@ void DisplayMenu()
             {
                 case 1:
                     DisplayAllFlights();
+                    
                     break;
 
                 case 2:
@@ -390,10 +397,13 @@ void DisplayMenu()
                     enterFlightNumber();
                     break;
                 case 6:
-                    ModifyFlightDetails();                   
+                    ModifyFlightDetails();
                     break;
                 case 7:
                     SortDisplayList();
+                    break;
+                case 8:
+                    seeBoardingGate();
                     break;
                 case 0:
                     Console.WriteLine("Goodbye!");
@@ -416,22 +426,22 @@ void DisplayMenu()
 
 
 DisplayMenu();
-// Task 7
+// Task 7 (Puru)
 
 void enterFlightNumber()
 {
     Console.Write("Enter a flight code: ");
     string flightCode = Console.ReadLine();
     bool codematch = false;
-    
+
     while (!codematch)
     {
         foreach (List<string> name in nameList)
         {
-            
+
             if (flightCode.ToUpper() == name[1])
             {
-                
+
                 codematch = true;
                 break;
             }
@@ -450,11 +460,11 @@ void enterFlightNumber()
         flightCode = Console.ReadLine();
 
     };
-    foreach (KeyValuePair<string,Flight> flight in flights)
+    foreach (KeyValuePair<string, Flight> flight in flights)
     {
-        
-        
-        if (flight.Key.Substring(0,2) == flightCode.ToUpper())
+
+
+        if (flight.Key.Substring(0, 2) == flightCode.ToUpper())
         {
             Console.WriteLine(flight.Key);
             Console.WriteLine(flight.Value);
@@ -465,16 +475,36 @@ void enterFlightNumber()
     string number = Console.ReadLine();
     string code = flightCode + " " + number;
     bool inside = false;
-    foreach (List<string> flight in flightList) 
+    string boardingGate = "";
+    
+    foreach (List<string> flight in flightList)
     {
-        
+        foreach (KeyValuePair<string, BoardingGate> pair in boardingGates)
+        {
+            try
+            {
+                if (pair.Value.flight is not null)
+                {
+                    if (code == pair.Value.flight.flightNumber)
+                    {
+                        boardingGate = pair.Key;
+                    }
+                }
+            }
+            catch 
+            {
+                
+            }
+
+        }
+
         if (code == flight[0])
         {
             inside = true;
             try
             {
-                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]},{flight[4]}");
-                
+                Console.WriteLine($"{flight[0]}, {flight[1]}, {flight[2]}, {flight[3]},{flight[4]},{boardingGate}");
+
             }
             catch
             {
@@ -508,7 +538,7 @@ void ModifyFlightDetails()
         else
         {
             Console.WriteLine("No Flight code found!");
-            ModifyFlightDetails(); 
+            ModifyFlightDetails();
         }
     }
 
@@ -652,7 +682,7 @@ void ModifyFlightDetails()
                 if (boardingGates.ContainsKey(selectedGateName) && boardingGates[selectedGateName].flight == null)
                 {
                     BoardingGate selectedGate = boardingGates[selectedGateName];
-                    selectedGate.flight = flights[selectedflight]; 
+                    selectedGate.flight = flights[selectedflight];
                     Console.WriteLine($"Gate {selectedGateName} has been successfully assigned to Flight {selectedflight}.");
                 }
                 else
@@ -766,5 +796,178 @@ void SortDisplayList()
         Console.WriteLine("{0,-12}{1,-22}{2,-18}{3,-18}{4,-20}{5,-14}{6,-15}{7,-10}", flight.flightNumber, airlineName, flight.origin, flight.destination, flight.expectedTime.ToString("hh:mm tt"), flight.status, specialRequestCode, boardingGate);
     }
 }
+
+
+void seeBoardingGate()
+{
+    Queue<Flight> flightQuence = new Queue<Flight>();
+    List<String> tempFlightList = new List<String>();
+    int assignedGates = 0;
+    foreach (List<string> flight in flightList)
+    {
+        foreach (KeyValuePair<string, BoardingGate> pair in boardingGates)
+        {
+            if (pair.Value.flight is not null)
+            {
+                tempFlightList.Add(pair.Value.flight.flightNumber);
+            }
+        }
+    }
+    foreach(List<String> flight in flightList)
+    {
+        foreach (KeyValuePair<string, Flight> keyValuePair in flights) 
+        {
+            if (!tempFlightList.Contains(flight[0]))
+            {
+                if (flight[0] == keyValuePair.Key)
+                {
+                    flightQuence.Enqueue(keyValuePair.Value);
+                }
+            }
+
+        }
+
+        
+        
+    }
+    Console.WriteLine("Unassigned flights");
+    foreach(Flight flight in flightQuence)
+    {
+        Console.WriteLine(flight.flightNumber);
+    }
+    Console.WriteLine("Unassigned Gates");
+    List<BoardingGate> unassingedBG = new List<BoardingGate> ();
+    foreach (KeyValuePair<string,BoardingGate> pair in boardingGates)
+    {
+        if (pair.Value.flight is null)
+        {
+            Console.WriteLine(pair.Key);
+            unassingedBG.Add(pair.Value);
+        }
+    }
+    while (flightQuence.Count != 0)
+    {
+
+        Flight proccessedFlight = flightQuence.Dequeue();
+        String bg = "";
+        String specialCode = "";
+        foreach (Flight flight in flightQuence)
+        {
+
+            foreach (List<String> listFlight in flightList)
+            {
+                if (proccessedFlight.flightNumber == listFlight[0])
+                {
+                    try
+                    {
+                        specialCode = listFlight[4];
+                    }
+                    catch
+                    {
+                        specialCode = "";
+                    }
+                }
+            }
+        }
+
+
+        if (specialCode == "DDJB")
+        {
+            foreach (BoardingGate boardingGate in unassingedBG)
+            {
+                
+                if (boardingGate.supportsDDJB)
+                {
+                    boardingGate.flight = proccessedFlight;
+                    bg = boardingGate.gateName;
+                    unassingedBG.Remove(boardingGate);
+                    break;
+                }
+
+
+            }
+
+        }
+        else if (specialCode == "CFFT")
+        {
+            foreach (BoardingGate boardingGate in unassingedBG)
+            {
+                if (boardingGate.supportsCFFT)
+                {
+                    boardingGate.flight = proccessedFlight;
+                    bg = boardingGate.gateName;
+                    unassingedBG.Remove(boardingGate);
+                    break;
+                }
+
+
+            }
+        }
+        else if (specialCode == "LWTT")
+        {
+            foreach (BoardingGate boardingGate in unassingedBG)
+            {
+                if (boardingGate.supportsLWTT)
+                {
+                    boardingGate.flight = proccessedFlight;
+                    bg = boardingGate.gateName;
+                    unassingedBG.Remove(boardingGate);
+                    break;
+                }
+
+
+            }
+        }
+        else if (specialCode == "")
+        {
+            foreach (BoardingGate boardingGate in unassingedBG)
+            {
+                if (!boardingGate.supportsLWTT && !boardingGate.supportsDDJB && !boardingGate.supportsCFFT)
+                {
+                    boardingGate.flight = proccessedFlight;
+                    bg = boardingGate.gateName;
+                    unassingedBG.Remove(boardingGate);
+                    break;
+                }
+
+
+            }
+
+        }
+        assignedGates += 1;
+        if (specialCode != "") 
+        { 
+            Console.WriteLine(proccessedFlight.flightNumber);
+            Console.WriteLine(bg);
+            Console.WriteLine(proccessedFlight.origin);
+            Console.WriteLine(proccessedFlight.destination);
+            Console.WriteLine(specialCode);
+        }
+        else
+        {
+            Console.WriteLine(proccessedFlight.flightNumber);
+            Console.WriteLine(bg);
+            Console.WriteLine(proccessedFlight.origin);
+            Console.WriteLine(proccessedFlight.destination);
+        }
+        
+    }
+    Console.WriteLine($"Total proccess flights: {assigngates + assignedGates}");
+    Console.WriteLine($"Automically assgined gates: {assignedGates}");
+    Console.WriteLine($"Manually assigned gates: {assigngates}");
+    //try
+    //{
+            
+    //}
+        
+
+
+
+        
+        
+
+}
+
+
 
 
