@@ -584,7 +584,6 @@ void ModifyFlightDetails()
                     selectedFlight.expectedTime = newdatetime;
 
                     Console.WriteLine("Flight information updated.");
-                    // Display updated flight details
                     DisplayFlightDetails(selectedFlight, AirlinesDictionary, boardingGates);
                 }
                 else
@@ -614,7 +613,6 @@ void ModifyFlightDetails()
                     Flight selectedFlight = flights[selectedflight];
                     selectedFlight.status = flightStatusOptions[newOption];
                     Console.WriteLine($"Flight {selectedFlight.flightNumber} status updated to {selectedFlight.status}.");
-                    // Display updated flight details
                     DisplayFlightDetails(selectedFlight, AirlinesDictionary, boardingGates);
                 }
                 break;
@@ -658,7 +656,6 @@ void ModifyFlightDetails()
                     Console.WriteLine("Invalid gate or gate is already assigned to another flight.");
                 }
 
-                // Display updated flight details after gate modification
                 DisplayFlightDetails(flights[selectedflight], AirlinesDictionary, boardingGates);
                 break;
 
