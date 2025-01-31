@@ -17,7 +17,24 @@ namespace PRG2_Assingment
         public string destination {  get; set; }
         public DateTime expectedTime { get; set; }
         public string status { get; set; }
-        public double CalculateFees() { return 0; }
+        public virtual double CalculateFees()
+        {
+            double fees = 0;
+
+            if (destination == "Singapore (SIN)")
+            {
+                fees += 500;
+            }
+
+            if (origin == "Singapore (SIN)")
+            {
+                fees += 800;
+            }
+
+            fees += 300;
+
+            return fees;
+        }
         public override string ToString()
         {
             return "Expected Time: " + expectedTime;

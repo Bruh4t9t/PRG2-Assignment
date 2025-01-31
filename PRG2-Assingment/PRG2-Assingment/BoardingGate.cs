@@ -38,18 +38,18 @@ namespace PRG2_Assingment
             return 0;
         }
 
-        public string ToString()
+        public BoardingGate(Flight flight, string gateName, bool supportsCFFT, bool supportsDDJB, bool supportsLWTT)
         {
-            return base.ToString();
+            this.flight = flight;
+            this.gateName = gateName;
+            this.supportsCFFT = supportsCFFT;
+            this.supportsDDJB = supportsDDJB;
+            this.supportsLWTT = supportsLWTT;
         }
 
-        public BoardingGate(Flight Flight,string GateName, bool SupportsCFFT, bool SupportsDDJB, bool SupportsLWTT)
+        public override string ToString()
         {
-            flight = Flight;
-            gateName = GateName;
-            supportsCFFT = SupportsCFFT;
-            supportsDDJB = SupportsDDJB;
-            supportsLWTT = SupportsLWTT;
+            return $"Gate: {gateName}, Supports CFFT: {supportsCFFT}, Supports DDJB: {supportsDDJB}, Supports LWTT: {supportsLWTT}, Flight: {flight?.flightNumber ?? "None"}";
         }
 
     }

@@ -18,9 +18,12 @@ namespace PRG2_Assingment
         public Dictionary<string, Flight> flights { get; set; }
         public bool AddFlight(Flight flight)
         {
-
-            flights.Add(flight.flightNumber, flight);
-            return true;
+            if (!flights.ContainsKey(flight.flightNumber))
+            {
+                flights.Add(flight.flightNumber, flight);
+                return true;
+            }
+            return false;
         }
         public double CalculateFees()
         {
@@ -32,14 +35,13 @@ namespace PRG2_Assingment
         }
         public override string ToString()
         {
-            return "";
+            return $"Airline: {name} ({code}), Flights: {flights.Count}";
         }
-        public Airline(string Name, string Code) 
+        public Airline(string name, string code)
         {
-            name = Name;
-            code = Code;
-            flights = new Dictionary<string, Flight>();
-            
+            this.name = name;
+            this.code = code;
+            this.flights = new Dictionary<string, Flight>();
         }
     }
 }

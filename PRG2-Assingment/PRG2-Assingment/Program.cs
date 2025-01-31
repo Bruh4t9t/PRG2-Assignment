@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.XPath;
+using static System.Net.Mime.MediaTypeNames;
 
 // Task 3 ( By Puru )
 List<List<string>> flightList = new List<List<string>>();
@@ -25,6 +26,8 @@ foreach (string line in File.ReadLines("flights.csv")) //Use your file path
 }
 flightList.RemoveAt(0);
 //int padding = 15;
+
+
 void DisplayAllFlights() // Turned into a method - Damian
 {
     Console.WriteLine("=============================================");
@@ -351,7 +354,14 @@ void DisplayAirlines(Dictionary<string, string> AirlinesDictionary)
 //setFlight();
 //AssignGate(flights);
 //AssignGate(flights);
+// Initialize gateFees (if not already done)
+Dictionary<string, double> gateFees = new Dictionary<string, double>();
 
+// Convert List<Airline> to Dictionary<string, Airline>
+Dictionary<string, Airline> airlinesDictionary = airlines.ToDictionary(airline => airline.code, airline => airline);
+
+// Create the Terminal object
+Terminal terminal = new Terminal("Terminal 5", airlinesDictionary, flights, boardingGates, gateFees);
 
 // Console Menu
 
@@ -419,7 +429,7 @@ void DisplayMenu()
                     autoAssignGates();
                     break;
                 case 9:
-                    DisplayTotalFee();
+                    DisplayTotalFee(terminal);
                     break;
                 case 0:
                     Console.WriteLine("Goodbye!");
@@ -979,172 +989,10 @@ void autoAssignGates()
 
 }
 
-void DisplayTotalFee()
+void DisplayTotalFee(Terminal terminal)
 {
-    Dictionary<string, double> airlineFees = new Dictionary<string, double>();
-    Dictionary<string, double> airlineDiscounts = new Dictionary<string, double>();
-
-    List<Flight> unassignedFlights = new List<Flight>();
-
-    foreach (var flight in flights.Values)
-    {
-        bool hasGate = false;
-        foreach (var gate in boardingGates.Values)
-        {
-            if (gate.flight == flight)
-            {
-                hasGate = true;
-                break;
-            }
-        }
-
-        if (!hasGate)
-        {
-            unassignedFlights.Add(flight);
-        }
-    }
-
-    if (unassignedFlights.Count > 0)
-    {
-        Console.WriteLine("The following flights have NOT been assigned a boarding gate:");
-        Console.WriteLine("{0,-12}{1,-25}{2,-25}{3,-22}{4,-10}", "Flight No.", "Origin", "Destination", "Departure Time", "Status");
-
-        foreach (var flight in unassignedFlights)
-        {
-            string formattedTime = flight.expectedTime.ToString("dd/MM/yyyy hh:mm tt");
-            Console.WriteLine("{0,-12}{1,-25}{2,-25}{3,-22}{4,-10}", flight.flightNumber, flight.origin, flight.destination, formattedTime, flight.status);
-        }
-
-        Console.WriteLine("Please assign gates before calculating fees.");
-        return;
-    }
-
-    foreach (var flight in flights.Values)
-    {
-        double subtotalFees = 0;
-        double discount = 0;
-        string airlineCode = flight.flightNumber.Substring(0, 2);
-        bool applied = false;
-        string airlineName = AirlinesDictionary.ContainsKey(airlineCode) ? AirlinesDictionary[airlineCode] : "Unknown";
-
-        if (flight.destination == "Singapore (SIN)")
-        {
-            subtotalFees += 500;
-        }
-
-        if (flight.origin == "Singapore (SIN)")
-        {
-            subtotalFees += 800;
-        }
-
-        subtotalFees += 300;
-
-        string specialRequestCode = "";
-        foreach (var flightDetails in flightList)
-        {
-            if (flightDetails[0] == flight.flightNumber && flightDetails.Count > 4)
-            {
-                specialRequestCode = flightDetails[4];
-                break;
-            }
-        }
-
-        if (specialRequestCode == "DDJB")
-        {
-            subtotalFees += 300;
-        }
-        else if (specialRequestCode == "CFFT")
-        {
-            subtotalFees += 150;
-        }
-        else if (specialRequestCode == "LWTT")
-        {
-            subtotalFees += 500;
-        }
-
-        if (flight.expectedTime.Hour < 11 || flight.expectedTime.Hour > 21)
-        {
-            discount += 110;
-        }
-
-        if (flight.origin == "Dubai (DXB)" || flight.origin == "Bangkok (BKK)" || flight.origin == "Tokyo (NRT)")
-        {
-            discount += 25;
-        }
-
-        if (specialRequestCode == "")
-        {
-            discount += 50;
-        }
-
-        int flightCount = 0;
-        foreach (var f in flights.Values)
-        {
-            if (f.flightNumber.Substring(0, 2) == flight.flightNumber.Substring(0, 2) &&
-                (f.origin == flight.origin || f.destination == flight.destination))
-            {
-                flightCount++;
-            }
-        }
-
-        if (flightCount % 3 == 0)
-        {
-            discount += 350;
-        }
-
-        if (!applied && flightCount > 5)
-        {
-            discount += subtotalFees * 0.03;
-            applied = true;
-        }
-
-        if (!airlineFees.ContainsKey(airlineName))
-        {
-            airlineFees[airlineName] = 0;
-            airlineDiscounts[airlineName] = 0;
-        }
-
-        airlineFees[airlineName] += subtotalFees;
-        airlineDiscounts[airlineName] += discount;
-    }
-
-    double totalFees = 0;
-    double totalDiscounts = 0;
-
-    Console.WriteLine("==============================================");
-    Console.WriteLine("Total Fees and Discounts Breakdown");
-    Console.WriteLine("==============================================");
-
-    foreach (var airline in airlines)
-    {
-        string airlineName = airline.name;
-        double airlineTotalFees = airlineFees.ContainsKey(airlineName) ? airlineFees[airlineName] : 0;
-        double airlineTotalDiscounts = airlineDiscounts.ContainsKey(airlineName) ? airlineDiscounts[airlineName] : 0;
-
-        double finalTotal = airlineTotalFees - airlineTotalDiscounts;
-        totalFees += airlineTotalFees;
-        totalDiscounts += airlineTotalDiscounts;
-
-        Console.WriteLine($"{airlineName}:");
-        Console.WriteLine($"  Subtotal Fees: {airlineTotalFees:C}");
-        Console.WriteLine($"  Discounts: {airlineTotalDiscounts:C}");
-        Console.WriteLine($"  Final Total: {finalTotal:C}");
-        Console.WriteLine();
-    }
-
-    double finalTotalFees = totalFees - totalDiscounts;
-    double discountPercentage = totalFees > 0 ? (totalDiscounts / totalFees) * 100 : 0;
-
-    Console.WriteLine("==============================================");
-    Console.WriteLine("Final Total for Terminal 5");
-    Console.WriteLine("==============================================");
-    Console.WriteLine($"  Subtotal Fees (All Airlines): {totalFees:C}");
-    Console.WriteLine($"  Subtotal Discounts: {totalDiscounts:C}");
-    Console.WriteLine($"  Final Total Fees Collected: {finalTotalFees:C}");
-    Console.WriteLine($"  Discount Percentage: {discountPercentage:F2}%");
-    Console.WriteLine("==============================================");
+    terminal.PrintAirlineFees(flightList);
 }
-
 
 
 
