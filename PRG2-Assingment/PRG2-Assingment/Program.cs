@@ -13,23 +13,21 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 // Task 3 ( By Puru )
 List<List<string>> flightList = new List<List<string>>();
 List<List<string>> nameList = new List<List<string>>();
-
+// Create flight list and name list to update the list with flight and airlines
 foreach (string line in File.ReadLines("airlines.csv"))
 {
     List<string> newList = new List<string>(line.Split(','));
     nameList.Add(newList);
 }
 nameList.RemoveAt(0);
-foreach (string line in File.ReadLines("flights.csv")) //Use your file path
+foreach (string line in File.ReadLines("flights.csv")) 
 {
     List<string> newList = new List<string>(line.Split(','));
     flightList.Add(newList);
 
 }
 flightList.RemoveAt(0);
-//int padding = 15;
-
-
+// Displays flights 
 void DisplayAllFlights()
 {
     Console.WriteLine("=============================================");
@@ -41,7 +39,7 @@ void DisplayAllFlights()
         foreach (List<string> name in nameList)
         {
             //Console.WriteLine(flight[0].Substring(0,2));
-            if (flight[0].Substring(0, 2) == name[1])
+        
             if (flight[0].Substring(0, 2) == name[1])
             {
 
@@ -51,26 +49,21 @@ void DisplayAllFlights()
     }
 }
 // Task 2(by Puru)
-Dictionary<string, Flight> flights = new Dictionary<string, Flight>();
+Dictionary<string, Flight> flights = new Dictionary<string, Flight>();// Creates dictionary for flights and adds flight to dictionary
 foreach (List<string> flightobj in flightList)
 {
     flights.Add(flightobj[0], new Flight(flightobj[0], flightobj[1], flightobj[2], Convert.ToDateTime(flightobj[3])));
 }
 // Task 1 Cont'd ( By Puru)
-List<Airline> airlines = new List<Airline>();
+List<Airline> airlines = new List<Airline>();// Creates Flight List and Airlines dictionary
 Dictionary<string, string> AirlinesDictionary = new Dictionary<string, string>();
-
+// Adds flight name to list
 foreach (List<string> name in nameList)
 {
     airlines.Add(new Airline(name[0], name[1]));
     AirlinesDictionary[name[1]] = name[0];
-}
-//foreach(KeyValuePair<string,string> pair in AirlinesDictionary)
-//{
-//    Console.WriteLine(pair.Key);
-//    Console.WriteLine(pair.Value);
-//}
-// Please keep below part we need it 
+} 
+//  Adds airline to airline list
 foreach (Airline airline in airlines)
 {
     foreach (KeyValuePair<string, Flight> pair in flights)
@@ -82,17 +75,9 @@ foreach (Airline airline in airlines)
         }
     }
 }
-//foreach(Airline airline in airlines)
-//{
-//    Console.WriteLine(airline.code);
-//}
-
-// For BoardingGates
 // Task 4( By Damian)
 string[] file_data = File.ReadAllLines("boardinggates.csv").Skip(1).ToArray();
-
 Dictionary<string, BoardingGate> boardingGates = new Dictionary<string, BoardingGate>();
-
 foreach (string item in file_data)
 {
     string[] gateData = item.Split(",");
@@ -266,7 +251,7 @@ void AssignGate(Dictionary<string, Flight> flights)
     }
     catch (FormatException)
     {
-        // input format exheption
+        // input format exception
         Console.WriteLine("ERnter a valid flight number or boarding gate.");
     }
 }
@@ -275,8 +260,8 @@ void AssignGate(Dictionary<string, Flight> flights)
 // Task 6 (Puru)
 void setFlight()
 {
-    string option = "Y";
-    List<string> codelist = nameList.Select(name => name[1]).ToList();
+    string option = "Y";// Takes in option by user
+    List<string> codelist = nameList.Select(name => name[1]).ToList();// Adds code to codelist and adds flights to checkFlightList
     List<string> checkFlightList = flightList.Select(flights => flights[0]).ToList();
 
     while (option == "Y")
@@ -286,7 +271,7 @@ void setFlight()
         {
             Console.Write("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
-
+            // Check fligh validation
             if (flightNumber.Length == 6 && !string.IsNullOrEmpty(flightNumber)
                 && codelist.Contains(flightNumber.Substring(0, 2))
                 && !checkFlightList.Contains(flightNumber))
@@ -301,6 +286,7 @@ void setFlight()
         string dep;
         while (true)
         {
+            // Checck DateTime validation
             Console.Write("Enter Expected Departure/Arrival: ");
             dep = Console.ReadLine();
             if (DateTime.TryParse(dep, out _))
@@ -314,6 +300,7 @@ void setFlight()
         {
             while (true)
             {
+                // Checks Special code validation
                 Console.Write("Enter Special Code (DDJB, CFFT, LWTT): ");
                 specialRequestCode = Console.ReadLine().Trim();
                 if (specialRequestCode == "DDJB" || specialRequestCode == "CFFT" || specialRequestCode == "LWTT")
@@ -322,6 +309,7 @@ void setFlight()
                 Console.WriteLine("Invalid Special Request Code. Try again.");
             }
         }
+        // Adds new flight object
         Flight newFlight = new Flight(flightNumber, origin, destination, Convert.ToDateTime(dep));
         flights.Add(flightNumber, newFlight);
         flightList.Add(new List<string> { flightNumber, origin, destination, dep, specialRequestCode });
@@ -333,6 +321,7 @@ void setFlight()
                 break;
             }
         }
+        // Ternary operator to see whether to output special request code or not
         string filePath = "flights.csv";
         string entry = specialRequestCode != ""
             ? $"\n{flightNumber},{origin},{destination},{dep},{specialRequestCode}"
@@ -358,22 +347,15 @@ void DisplayAirlines(Dictionary<string, string> AirlinesDictionary)
     }
 }
 
-//setFlight();
-//AssignGate(flights);
-//AssignGate(flights);
 // Initialize gateFees (if not already done)
 Dictionary<string, double> gateFees = new Dictionary<string, double>();
-
 // Convert List<Airline> to Dictionary<string, Airline>
 Dictionary<string, Airline> airlinesDictionary = airlines.ToDictionary(airline => airline.code, airline => airline);
-
 // Create the Terminal object
 // for advance b
 Terminal terminal = new Terminal("Terminal 5", airlinesDictionary, flights, boardingGates, gateFees);
 
 // Console Menu
-
-
 Console.WriteLine("Loading Airlines...");
 Console.WriteLine("8 Airlines Loaded!");
 Console.WriteLine("Loading Boarding Gates...");
@@ -463,13 +445,12 @@ void DisplayMenu()
 
 DisplayMenu();
 // Task 7 (Puru)
-
 void enterFlightNumber()
 {
     Console.Write("Enter a flight code: ");
     string flightCode = Console.ReadLine();
     bool codematch = false;
-
+    // Checks whether flighr code matches
     while (!codematch)
     {
         foreach (List<string> name in nameList)
@@ -482,7 +463,6 @@ void enterFlightNumber()
                 break;
             }
         }
-        //Console.WriteLine(codematch);
         if (codematch)
         {
             break;
@@ -506,6 +486,7 @@ void enterFlightNumber()
         }
 
     }
+    // Prompts user to input a valid flight number
     Console.Write("Enter a valid flight number: ");
     string number = Console.ReadLine();
     string code = flightCode.ToUpper() + " " + number;
@@ -532,7 +513,7 @@ void enterFlightNumber()
             }
 
         }
-
+        // Outputs relevant information
         if (code == flight[0])
         {
             inside = true;
@@ -552,9 +533,6 @@ void enterFlightNumber()
         Console.WriteLine("Flight does not exist");
     }
 }
-//enterFlightNumber();
-
-
 
 // Task 8 by Damian
 void ModifyFlightDetails()
@@ -971,9 +949,9 @@ void SortDisplayList()
 // Advanced(a) (Puru)
 void autoAssignGates()
 {
-    Queue<Flight> flightQuence = new Queue<Flight>();
+    Queue<Flight> flightQuence = new Queue<Flight>();// Function to auto assign gates and adds flight to quence 
     List<string> tempFlightList = new List<string>();
-    foreach (List<string> flight in flightList)
+    foreach (List<string> flight in flightList)// Adds flights to a temporary list
     {
         foreach (KeyValuePair<string, BoardingGate> pair in boardingGates)
         {
@@ -983,7 +961,7 @@ void autoAssignGates()
             }
         }
     }
-    foreach(List<string> flight in flightList)
+    foreach(List<string> flight in flightList)// Adds flights to Queue
     {
         foreach (KeyValuePair<string, Flight> keyValuePair in flights) 
         {
@@ -995,13 +973,11 @@ void autoAssignGates()
                 }
             }
 
-        }
-
-        
+        }   
         
     }
 
-    Console.WriteLine("=============================================");
+    Console.WriteLine("=============================================");// Outputs unnassgned flights
     Console.WriteLine("Unassigned flights");
     foreach(Flight flight in flightQuence)
     {
@@ -1009,10 +985,10 @@ void autoAssignGates()
     }
     Console.WriteLine();
 
-    Console.WriteLine("=============================================");
+    Console.WriteLine("=============================================");// Outputs unnassgned gates
     Console.WriteLine("Unassigned Gates");
     List<BoardingGate> unassingedBG = new List<BoardingGate> ();
-    foreach (KeyValuePair<string,BoardingGate> pair in boardingGates)
+    foreach (KeyValuePair<string,BoardingGate> pair in boardingGates)// Adds boarding gates to list
     {
         if (pair.Value.flight is null)
         {
@@ -1022,13 +998,13 @@ void autoAssignGates()
         }
     }
     Console.WriteLine();
-
+    // Outputs updates gates to Console
     Console.WriteLine("=============================================");
     Console.WriteLine("Updated Gates");
     Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-15}{4}", "Flight Number", "Origin", "Destination", "Boarding Gate", "Special Code");
     while (flightQuence.Count != 0)
     {
-
+        // Dequeuence flight 
         Flight proccessedFlight = flightQuence.Dequeue();
         string bg = "";
         string specialCode = "";
@@ -1051,7 +1027,7 @@ void autoAssignGates()
             }
         }
 
-
+        // Checks if special codes match special code and thus assigns gates
         if (specialCode == "DDJB")
         {
             foreach (BoardingGate boardingGate in unassingedBG)
@@ -1114,7 +1090,7 @@ void autoAssignGates()
             }
 
         }
-        
+        // Increments auto assigned gates
         auAssignGates += 1;
 
         if (specialCode != "") 
@@ -1129,6 +1105,7 @@ void autoAssignGates()
         }
 
     }
+    // Outputs statistics
     Console.WriteLine($"Total processed flights: {assigngates + auAssignGates}");
     Console.WriteLine($"Automatically assigned gates: {auAssignGates} ({(auAssignGates / (double)(assigngates + auAssignGates) * 100):F1}%)");
     Console.WriteLine($"Manually assigned gates: {assigngates} ({(assigngates / (double)(assigngates + auAssignGates) * 100):F1}%)");
