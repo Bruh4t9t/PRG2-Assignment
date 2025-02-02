@@ -133,6 +133,8 @@ bool checkYN(string yn)
 }
 
 int assigngates = 0;
+
+int auAssignGates = 0;
 // Task 5 by Damian 
 void AssignGate(Dictionary<string, Flight> flights)
 {
@@ -274,98 +276,70 @@ void AssignGate(Dictionary<string, Flight> flights)
 void setFlight()
 {
     string option = "Y";
-    List<string> codelist = new List<string>();
+    List<string> codelist = nameList.Select(name => name[1]).ToList();
+    List<string> checkFlightList = flightList.Select(flights => flights[0]).ToList();
+
     while (option == "Y")
     {
-        Console.Write("Enter Flight number: ");
-        string flightNumber = Console.ReadLine().ToUpper();
-        while (flightNumber.Length != 6)
+        string flightNumber;
+        while (true)
         {
-            Console.WriteLine("Invalid Innput");
-            Console.Write("Enter Flight number: ");
+            Console.Write("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
 
-        }
-        Console.WriteLine(flightNumber.Substring(0, 2));
+            if (flightNumber.Length == 6 && !string.IsNullOrEmpty(flightNumber)
+                && codelist.Contains(flightNumber.Substring(0, 2))
+                && !checkFlightList.Contains(flightNumber))
+                break;
 
-        foreach (List<string> name in nameList)
-        {
-            codelist.Add(name[1]);
-            Console.WriteLine(name[1]);
+            Console.WriteLine("Invalid Flight Number. Must be unique, 6 characters long, and have a valid code.");
         }
-        while (!(codelist.Contains(flightNumber.Substring(0, 2))))
-        {
-            Console.WriteLine("Invalid Innput");
-            Console.Write("Enter Flight number: ");
-            flightNumber = Console.ReadLine().ToUpper();
-        }
-
         Console.Write("Enter Origin: ");
         string origin = Console.ReadLine();
         Console.Write("Enter Destination: ");
-        string Destination = Console.ReadLine();
-        Console.Write("Enter Expected Departure/Arrival: ");
-        string dep = Console.ReadLine();
-        while (!DateTime.TryParse(dep, out DateTime result))
+        string destination = Console.ReadLine();
+        string dep;
+        while (true)
         {
-            Console.WriteLine("Invalid Date Time");
             Console.Write("Enter Expected Departure/Arrival: ");
             dep = Console.ReadLine();
+            if (DateTime.TryParse(dep, out _))
+                break;
+            Console.WriteLine("Invalid Date Time format. Please try again.");
         }
-        string SpecialRequestCode = "";
-        Console.Write("Do you want to enter a special request code(N/Y): ");
-        if (Console.ReadLine().ToUpper() == "Y")
+
+        string specialRequestCode = "";
+        Console.Write("Do you want to enter a special request code? (Y/N): ");
+        if (Console.ReadLine().Trim().ToUpper() == "Y")
         {
-            Console.WriteLine("Enter special code: ");
-            SpecialRequestCode = Console.ReadLine();
-            while (SpecialRequestCode != "DDJB" && SpecialRequestCode != "CFFT" && SpecialRequestCode != "LWTT")
+            while (true)
             {
-                Console.WriteLine("Special request code is wrong");
-                Console.Write("Enter special code: ");
-                SpecialRequestCode = Console.ReadLine();
-
-            }
-
-        }
-        Flight newFlight = new Flight(flightNumber, origin, Destination, Convert.ToDateTime(dep));
-        flights.Add(flightNumber, newFlight);
-        try
-        {
-            flightList.Add(new List<string> { newFlight.flightNumber, newFlight.origin, newFlight.destination,Convert.ToString(newFlight.expectedTime),SpecialRequestCode });
-        }
-        catch
-        {
-            flightList.Add(new List<string> { newFlight.flightNumber, newFlight.origin, newFlight.destination, Convert.ToString(newFlight.expectedTime) });
-
-        }
-
-        foreach (Airline airline in airlines)
-        {
-            foreach (KeyValuePair<string, Flight> pair in flights)
-            {
-                if (pair.Key.Substring(0, 2) == airline.code)
-                {
-                    airline.AddFlight(newFlight);
+                Console.Write("Enter Special Code (DDJB, CFFT, LWTT): ");
+                specialRequestCode = Console.ReadLine().Trim();
+                if (specialRequestCode == "DDJB" || specialRequestCode == "CFFT" || specialRequestCode == "LWTT")
                     break;
 
-                }
+                Console.WriteLine("Invalid Special Request Code. Try again.");
             }
         }
-        if (SpecialRequestCode != "")
+        Flight newFlight = new Flight(flightNumber, origin, destination, Convert.ToDateTime(dep));
+        flights.Add(flightNumber, newFlight);
+        flightList.Add(new List<string> { flightNumber, origin, destination, dep, specialRequestCode });
+        foreach (Airline airline in airlines)
         {
-            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep},{SpecialRequestCode}");
+            if (flightNumber.StartsWith(airline.code))
+            {
+                airline.AddFlight(newFlight);
+                break;
+            }
         }
-        else
-        {
-            File.AppendAllText("flights.csv", $"\n{flightNumber},{origin},{Destination},{dep}");
-        }
-        Console.WriteLine("Do you want to enter another flight (Y/N)");
-        option = Console.ReadLine().ToUpper();
-        
-        if (option == "N")
-        {
-            break;
-        }
+        string filePath = "flights.csv";
+        string entry = specialRequestCode != ""
+            ? $"\n{flightNumber},{origin},{destination},{dep},{specialRequestCode}"
+            : $"\n{flightNumber},{origin},{destination},{dep}";
+        File.AppendAllText(filePath, entry);
+        Console.Write("Do you want to enter another flight? (Y/N): ");
+        option = Console.ReadLine().Trim().ToUpper();
     }
 }
 
@@ -999,7 +973,6 @@ void autoAssignGates()
 {
     Queue<Flight> flightQuence = new Queue<Flight>();
     List<string> tempFlightList = new List<string>();
-    int assignedGates = 0;
     foreach (List<string> flight in flightList)
     {
         foreach (KeyValuePair<string, BoardingGate> pair in boardingGates)
@@ -1027,21 +1000,30 @@ void autoAssignGates()
         
         
     }
+
+    Console.WriteLine("=============================================");
     Console.WriteLine("Unassigned flights");
     foreach(Flight flight in flightQuence)
     {
-        //Console.WriteLine(flight.flightNumber);
+        Console.WriteLine(flight.flightNumber);
     }
+    Console.WriteLine();
+
+    Console.WriteLine("=============================================");
     Console.WriteLine("Unassigned Gates");
     List<BoardingGate> unassingedBG = new List<BoardingGate> ();
     foreach (KeyValuePair<string,BoardingGate> pair in boardingGates)
     {
         if (pair.Value.flight is null)
         {
-            //Console.WriteLine(pair.Key);
+            Console.WriteLine(pair.Key);
             unassingedBG.Add(pair.Value);
+
         }
     }
+    Console.WriteLine();
+
+    Console.WriteLine("=============================================");
     Console.WriteLine("Updated Gates");
     Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-15}{4}", "Flight Number", "Origin", "Destination", "Boarding Gate", "Special Code");
     while (flightQuence.Count != 0)
@@ -1132,35 +1114,24 @@ void autoAssignGates()
             }
 
         }
-        assignedGates += 1;
+        
+        auAssignGates += 1;
+
         if (specialCode != "") 
         {
 
             Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-15}{4}", proccessedFlight.flightNumber, proccessedFlight.origin, proccessedFlight.destination, bg,specialCode);
-
-            //Console.WriteLine(proccessedFlight.flightNumber);
-            //Console.WriteLine(bg);
-            //Console.WriteLine(proccessedFlight.origin);
-            //Console.WriteLine(proccessedFlight.destination);
-            //Console.WriteLine(specialCode);
         }
         else
         {
             Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-15}", proccessedFlight.flightNumber, proccessedFlight.origin, proccessedFlight.destination, bg);
-            //Console.WriteLine(proccessedFlight.flightNumber);
-            //Console.WriteLine(bg);
-            //Console.WriteLine(proccessedFlight.origin);
-            //Console.WriteLine(proccessedFlight.destination);
+
         }
 
     }
-    Console.WriteLine($"Total proccess flights: {assigngates + assignedGates}");
-    Console.WriteLine($"Automically assgined gates: {assignedGates}");
-    Console.WriteLine($"Manually assigned gates: {assigngates}");
-    //try
-    //{
-            
-    //}
+    Console.WriteLine($"Total processed flights: {assigngates + auAssignGates}");
+    Console.WriteLine($"Automatically assigned gates: {auAssignGates} ({(auAssignGates / (double)(assigngates + auAssignGates) * 100):F1}%)");
+    Console.WriteLine($"Manually assigned gates: {assigngates} ({(assigngates / (double)(assigngates + auAssignGates) * 100):F1}%)");
 
 }
 
