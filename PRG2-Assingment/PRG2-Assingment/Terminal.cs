@@ -28,10 +28,12 @@ namespace PRG2_Assingment
             this.gateFees = gateFees ?? new Dictionary<string, double>();
         }
 
+        // print airline fees
         public void PrintAirlineFees(List<List<string>> flightList)
         {
             List<Flight> unassignedFlights = new List<Flight>();
 
+            // check if flights that don't have boarding gates
             foreach (var flight in flights.Values)
             {
                 bool hasGate = boardingGates.Values.Any(gate => gate.flight == flight);
@@ -59,6 +61,8 @@ namespace PRG2_Assingment
             Console.WriteLine("Total Fees and Discounts Breakdown");
             Console.WriteLine("==============================================");
 
+
+            // loop through all airlines
             foreach (var airline in airlines.Values)
             {
                 double totalFees = 0;
@@ -71,6 +75,7 @@ namespace PRG2_Assingment
                     double flightTotalFee = 300;
                     double specialRequestFee = 0;
 
+                    // Add fees for flight origin and destination
                     if (flight.origin == "Singapore (SIN)")
                     {
                         flightTotalFee += 800;
@@ -80,6 +85,7 @@ namespace PRG2_Assingment
                         flightTotalFee += 500;
                     }
 
+                    // check for any special request code
                     foreach (var item in flightList)
                     {
                         if (item[0] == flight.flightNumber)
@@ -91,18 +97,21 @@ namespace PRG2_Assingment
                                 if (specialRequestCode == "DDJB")
                                 {
                                     DDJBFlight ddjbflight = new DDJBFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    // add fee
                                     specialRequestFee = ddjbflight.requestFee;
                                     //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
                                 }
                                 else if (specialRequestCode == "CFFT")
                                 {
                                     CFFTFlight cfftflight = new CFFTFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    // add fee
                                     specialRequestFee = cfftflight.requestFee;
                                     //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
                                 }
                                 else if (specialRequestCode == "LWTT")
                                 {
                                     LWTTFFlight lwttflight = new LWTTFFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    // add fee
                                     specialRequestFee = lwttflight.requestFee;
                                     //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
                                 }
@@ -113,24 +122,23 @@ namespace PRG2_Assingment
                             }
                         }
                     }
-
+                    // Add special request fees to subtotal
                     flightTotalFee += specialRequestFee;
                     totalFees += flightTotalFee;
 
-                    // Calculate discounts
-                    // Discount 1: For flights arriving/departing before 11am or after 9pm
+                    //For flights arriving/departing before 11am or after 9pm
                     if (flight.expectedTime.Hour < 11 || flight.expectedTime.Hour > 21)
                     {
                         totalDiscounts += 110;
                     }
 
-                    // Discount 2: For flights with origin of Dubai (DXB), Bangkok (BKK), or Tokyo (NRT)
+                    // For flights with origin of Dubai (DXB), Bangkok (BKK), or Tokyo (NRT)
                     if (flight.origin == "Dubai (DXB)" || flight.origin == "Bangkok (BKK)" || flight.origin == "Tokyo (NRT)")
                     {
                         totalDiscounts += 25;
                     }
 
-                    // Discount 3: For flights without any special request codes
+                    // For flights without any special request codes
                     if (norm)
                     {
                         totalDiscounts += 50;
@@ -139,18 +147,19 @@ namespace PRG2_Assingment
                     flightCount++;
                 }
 
-                // Discount 4: For every 3 flights, $350 discount
+                // For every 3 flights
                 if (flightCount >= 3)
                 {
                     totalDiscounts += 350 * (flightCount / 3);
                 }
 
-                // Discount 5: For airlines with more than 5 flights, 3% off the total bill
+                // more than 5 flights 3% off the total bill
                 if (flightCount > 5)
                 {
                     totalDiscounts += (totalFees * 0.03);
                 }
 
+                // Store the calculated fees and discounts for each airline
                 airlineFees[airline.name] = totalFees;
                 airlineDiscounts[airline.name] = totalDiscounts;
 
