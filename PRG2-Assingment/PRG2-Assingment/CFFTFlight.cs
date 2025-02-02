@@ -10,16 +10,24 @@ using System.Threading.Tasks;
 //==========================================================
 namespace PRG2_Assingment
 {
-    public class CFFTFlight //:Flight
+    public class CFFTFlight : Flight
     {
-        public double requestfee {  get; set; }
-        /*public override double CalculateFees()
+        public double requestFee { get; set; }
+
+        public CFFTFlight(string flightNumber, string origin, string destination, DateTime expectedTime)
+            : base(flightNumber, origin, destination, expectedTime)
         {
-            return 0;
-        }*/
+            requestFee = 150;
+        }
+
+        public override double CalculateFees()
+        {
+            return base.CalculateFees() + requestFee;
+        }
+
         public override string ToString()
         {
-            return base.ToString();
+            return $"{base.ToString()}, Request Fee: {requestFee}";
         }
     }
 }

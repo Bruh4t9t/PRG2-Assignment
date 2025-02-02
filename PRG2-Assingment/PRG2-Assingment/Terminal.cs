@@ -67,50 +67,71 @@ namespace PRG2_Assingment
 
                 foreach (var flight in airline.flights.Values)
                 {
-                    if (flight.destination == "Singapore (SIN)")
-                    {
-                        totalFees += 500; 
-                    }
+                    bool norm = false;
+                    double flightTotalFee = 300;
+                    double specialRequestFee = 0;
+
                     if (flight.origin == "Singapore (SIN)")
                     {
-                        totalFees += 800;
+                        flightTotalFee += 800;
+                    }
+                    else if (flight.destination == "Singapore (SIN)")
+                    {
+                        flightTotalFee += 500;
                     }
 
-                    totalFees += 300;
-                    string specialRequestCode = "";
-                    foreach (var flightDetails in flightList)
+                    foreach (var item in flightList)
                     {
-                        if (flightDetails[0] == flight.flightNumber)
+                        if (item[0] == flight.flightNumber)
                         {
-                            specialRequestCode = flightDetails[4];
-                            break;
+                            if (item.Count > 4)
+                            {
+                                string specialRequestCode = item[4];
+
+                                if (specialRequestCode == "DDJB")
+                                {
+                                    DDJBFlight ddjbflight = new DDJBFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    specialRequestFee = ddjbflight.requestFee;
+                                    //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
+                                }
+                                else if (specialRequestCode == "CFFT")
+                                {
+                                    CFFTFlight cfftflight = new CFFTFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    specialRequestFee = cfftflight.requestFee;
+                                    //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
+                                }
+                                else if (specialRequestCode == "LWTT")
+                                {
+                                    LWTTFFlight lwttflight = new LWTTFFlight(item[0], item[1], item[2], Convert.ToDateTime(item[3]));
+                                    specialRequestFee = lwttflight.requestFee;
+                                    //Console.WriteLine($"{flight.flightNumber} {specialRequestFee}");
+                                }
+                            }
+                            else
+                            {
+                                norm = true;
+                            }
                         }
                     }
 
-                    if (specialRequestCode == "CFFT")
-                    {
-                        totalFees += 150;
-                    }
-                    else if (specialRequestCode == "DDJB")
-                    {
-                        totalFees += 300;
-                    }
-                    else if (specialRequestCode == "LWTT")
-                    {
-                        totalFees += 500;
-                    }
+                    flightTotalFee += specialRequestFee;
+                    totalFees += flightTotalFee;
 
+                    // Calculate discounts
+                    // Discount 1: For flights arriving/departing before 11am or after 9pm
                     if (flight.expectedTime.Hour < 11 || flight.expectedTime.Hour > 21)
                     {
                         totalDiscounts += 110;
                     }
 
+                    // Discount 2: For flights with origin of Dubai (DXB), Bangkok (BKK), or Tokyo (NRT)
                     if (flight.origin == "Dubai (DXB)" || flight.origin == "Bangkok (BKK)" || flight.origin == "Tokyo (NRT)")
                     {
                         totalDiscounts += 25;
                     }
 
-                    if (specialRequestCode == "")
+                    // Discount 3: For flights without any special request codes
+                    if (norm)
                     {
                         totalDiscounts += 50;
                     }
@@ -118,14 +139,16 @@ namespace PRG2_Assingment
                     flightCount++;
                 }
 
+                // Discount 4: For every 3 flights, $350 discount
                 if (flightCount >= 3)
                 {
                     totalDiscounts += 350 * (flightCount / 3);
                 }
 
+                // Discount 5: For airlines with more than 5 flights, 3% off the total bill
                 if (flightCount > 5)
                 {
-                    totalDiscounts += totalFees * 0.03;
+                    totalDiscounts += (totalFees * 0.03);
                 }
 
                 airlineFees[airline.name] = totalFees;
@@ -152,6 +175,7 @@ namespace PRG2_Assingment
             Console.WriteLine($"  Discount Percentage: {discountPercentage:F2}%");
             Console.WriteLine("==============================================");
         }
+
 
         public override string ToString()
         {

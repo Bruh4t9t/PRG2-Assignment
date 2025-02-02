@@ -104,6 +104,8 @@ foreach (string item in file_data)
 }
 
 
+
+
 void DisplayGates(Dictionary<string, BoardingGate> boardingGates)
 {
     Console.WriteLine("{0,-15}{1,-15}{2,15}{3,15}", "Boarding Gate", "DDJB", "CFFT", "LWTT");

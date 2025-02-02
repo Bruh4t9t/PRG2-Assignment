@@ -10,21 +10,23 @@ using System.Threading.Tasks;
 //==========================================================
 namespace PRG2_Assingment
 {
-    public class DDJBFlight //: Flight
+    public class DDJBFlight : Flight
     {
-        public double requestFee
+        public double requestFee { get; set; }
+
+        public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime) : base(flightNumber, origin, destination, expectedTime)
         {
-            get; set;
+            requestFee = 300;
         }
 
-        /*public override double CalculateFees()
+        public override double CalculateFees()
         {
-            return 0;
-        }*/
+            return base.CalculateFees() + requestFee;
+        }
 
         public override string ToString()
         {
-            return base.ToString();
+            return $"{base.ToString()}, Request Fee: {requestFee}";
         }
     }
 }

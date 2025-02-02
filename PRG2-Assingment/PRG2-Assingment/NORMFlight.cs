@@ -10,15 +10,24 @@ using System.Threading.Tasks;
 //==========================================================
 namespace PRG2_Assingment
 {
-    public class NORMFlight //:Flight
+    public class NORMFlight : Flight
     {
-        /*public override double CalculateFees()
+        public double requestFee { get; set; }
+
+        public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime)
+            : base(flightNumber, origin, destination, expectedTime)
         {
-            return 0 ;
-        }*/
+            requestFee = 50;
+        }
+
+        public override double CalculateFees()
+        {
+            return base.CalculateFees() + requestFee;
+        }
+
         public override string ToString()
         {
-            return base.ToString();
+            return $"{base.ToString()}, Request Fee: {requestFee}";
         }
     }
 }
